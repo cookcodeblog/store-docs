@@ -27,8 +27,9 @@
 * Eureka：服务注册与发现
 * Zuul：API网关
 * OpenFeign：服务间调用
+* OpenTracing： 分布式服务跟踪
 * Jaeger：分布式服务跟踪可视化
-* Hystrix：容错处理
+* Hystrix：容错处理（熔断）
 * Turbine：汇聚Hystrix指标
 * Hystrix Dashboard：Hystrix指标可视化展示
 
@@ -56,7 +57,7 @@ customer -> preference -> recommendation
 
 项目的总体架构如下：
 
-
+![总体架构](../images/arch.png)
 
 
 
@@ -585,10 +586,18 @@ bash ./scripts/start_jaeger.sh
 如果是命令行运行，则类似：
 
 ```bash
-java -jar -Dspring.profiles.active=local ./store-config-server/target/*.jar
+java -jar -Dspring.profiles.active=local ./store-config-server/target/store-config*.jar
 ```
 
 
+
+如果需要访问本地Config Server还需要指定Config Server的地址，类似：
+
+```bash
+java -jar -Dspring.profiles.active=local \
+    -Dspring.cloud.config.uri=http://localhost:8888 \
+    ./store-config-server/target/*.jar
+```
 
 
 
