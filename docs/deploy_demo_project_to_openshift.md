@@ -30,7 +30,7 @@
 
 
 
-因为GitHub无法访问演示环境的OpenShift的，因此无法通过GitHub webhook来通知OpenShift自动构建和部署，在代码提交后，需要手工在演示环境的OpenShift构建，构建完成后会自动触发部署。
+因为GitHub无法访问演示环境的OpenShift，因此无法通过GitHub webhook来通知OpenShift自动构建和部署，在代码提交后，需要手工在演示环境的OpenShift构建，构建完成后会自动触发部署。
 
 
 
@@ -50,7 +50,7 @@
 
 - 服务注册中心：<http://service-registry-william-store.apps.ocp4-grub.ocp.com/>
 
-- Customer服务（Zuul）：<http://gateway-william-store.apps.ocp4-grub.ocp.com/api/customer>
+- Customer服务（Zuul代理）：<http://gateway-william-store.apps.ocp4-grub.ocp.com/api/customer>
 
 - Hystrix Dashboard: <http://hystrix-ui-william-store.apps.ocp4-grub.ocp.com/hystrix/>
 
