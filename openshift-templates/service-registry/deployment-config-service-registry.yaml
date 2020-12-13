@@ -1,0 +1,66 @@
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  annotations: {}
+  labels:
+    app: service-registry
+    app.kubernetes.io/component: service-registry
+    app.kubernetes.io/instance: service-registry
+    app.kubernetes.io/name: java
+    app.kubernetes.io/part-of: store
+    app.openshift.io/runtime: java
+    app.openshift.io/runtime-version: openjdk-11-el7
+  name: service-registry
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    app: service-registry
+    deploymentconfig: service-registry
+  strategy:
+    activeDeadlineSeconds: 21600
+    resources: {}
+    rollingParams:
+      intervalSeconds: 1
+      maxSurge: 25%
+      maxUnavailable: 25%
+      timeoutSeconds: 600
+      updatePeriodSeconds: 1
+    type: Rolling
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: service-registry
+        deploymentconfig: service-registry
+    spec:
+      containers:
+        - image: ' '
+          imagePullPolicy: Always
+          name: service-registry
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+            - containerPort: 8443
+              protocol: TCP
+            - containerPort: 8778
+              protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+  test: false
+  triggers:
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+          - service-registry
+        from:
+          kind: ImageStreamTag
+          name: service-registry:latest
+      type: ImageChange
+    - type: ConfigChange

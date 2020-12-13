@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations: {}
+  labels:
+    app: service-registry
+    app.kubernetes.io/component: service-registry
+    app.kubernetes.io/instance: service-registry
+    app.kubernetes.io/name: java
+    app.kubernetes.io/part-of: store
+    app.openshift.io/runtime: java
+    app.openshift.io/runtime-version: openjdk-11-el7
+  name: service-registry
+spec:
+  ports:
+    - name: 8080-tcp
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+    - name: 8443-tcp
+      port: 8443
+      protocol: TCP
+      targetPort: 8443
+    - name: 8778-tcp
+      port: 8778
+      protocol: TCP
+      targetPort: 8778
+  selector:
+    app: service-registry
+    deploymentconfig: service-registry
+  sessionAffinity: None
+  type: ClusterIP

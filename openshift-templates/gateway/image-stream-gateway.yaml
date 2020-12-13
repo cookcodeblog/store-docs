@@ -1,0 +1,16 @@
+apiVersion: image.openshift.io/v1
+kind: ImageStream
+metadata:
+  annotations: {}
+  labels:
+    app: gateway
+    app.kubernetes.io/component: gateway
+    app.kubernetes.io/instance: gateway
+    app.kubernetes.io/name: java
+    app.kubernetes.io/part-of: store
+    app.openshift.io/runtime: java
+    app.openshift.io/runtime-version: openjdk-8-el7
+  name: gateway
+spec:
+  lookupPolicy:
+    local: false

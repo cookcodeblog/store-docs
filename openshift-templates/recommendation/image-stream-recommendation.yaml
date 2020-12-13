@@ -1,0 +1,16 @@
+apiVersion: image.openshift.io/v1
+kind: ImageStream
+metadata:
+  annotations: {}
+  labels:
+    app: recommendation
+    app.kubernetes.io/component: recommendation
+    app.kubernetes.io/instance: recommendation
+    app.kubernetes.io/name: java
+    app.kubernetes.io/part-of: store
+    app.openshift.io/runtime: java
+    app.openshift.io/runtime-version: openjdk-8-el7
+  name: recommendation
+spec:
+  lookupPolicy:
+    local: false
