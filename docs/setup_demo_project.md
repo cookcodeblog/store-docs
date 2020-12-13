@@ -15,7 +15,7 @@
 ### 版本
 
 * Java 8
-* Spring Boot 2.1.1.RELEASE
+* Spring Boot 2.2.11.RELEASE
 * Spring Cloud Hoxton.SR9
 * Maven 3.6
 
@@ -336,7 +336,7 @@ logging:
 
 参见：
 
-* <<https://cloud.spring.io/spring-cloud-netflix/multi/multi__service_discovery_eureka_clients.html>
+* <https://cloud.spring.io/spring-cloud-netflix/multi/multi__service_discovery_eureka_clients.html>
 
 * <https://docs.spring.io/spring-cloud-netflix/docs/2.2.5.RELEASE/reference/html/#service-discovery-eureka-clients>
 
@@ -611,7 +611,7 @@ java -jar -Dspring.profiles.active=local \
 - preference
 - recommendation
 - gateway 
-- hysteria-ui
+- hystrix-ui
 
 
 
