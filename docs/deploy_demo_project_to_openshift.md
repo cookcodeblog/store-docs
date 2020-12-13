@@ -6,7 +6,7 @@
 
 ## 创建OpenShift项目
 
-在OpenShift上创建名为`William-store`的项目。
+在OpenShift上创建名为`william-store`的项目。
 
 
 
