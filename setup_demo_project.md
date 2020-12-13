@@ -27,7 +27,6 @@
 * Eureka：服务注册与发现
 * Zuul：API网关
 * OpenFeign：服务间调用
-* OpenTracing：分布式服务跟踪
 * Jaeger：分布式服务跟踪可视化
 * Hystrix：容错处理
 * Turbine：汇聚Hystrix指标
@@ -107,6 +106,12 @@ customer -> preference -> recommendation
 
 ### `store-config-server`
 
+参见：
+
+- <https://cloud.spring.io/spring-cloud-config/reference/html/#_spring_cloud_config_server>
+
+  
+
 引入Maven依赖：
 
 ```xml
@@ -132,9 +137,10 @@ spring:
     config:
       server:
         git:
-          uri: https://<git_repo_host>>/xxx/store-config-repo.git
+          uri: https://github.com/cookcodeblog/store-config-repo.git
           clone-on-start: true
           default-label: main
+          force-pull: true
 
 ```
 
@@ -146,26 +152,17 @@ spring:
 * `git.url`为Config Repo的Git repository URL。
 * `clone-on-start`为`true`表示Config Server启动时，就克隆Config Repo。如果配置的Config Repo有错，则Config Server启动失败。
 * `default-label`指定Git repository的默认分支。
-
-
-
-在`src/main/resources/`下添加`application.yaml`，内容为：
-
-```yaml
-server:
-  port: ${CONFIG_SERVER_PORT:8888}
-
-```
-
-
-
-说明：
-
-* `server.port`为指定服务的端口，默认为`8888`，可通过外部传入环境变量指定。
+* `force-pull` 如果本地repo数据变动后，强制用远程repo更新本地repo数据。
 
 
 
 ### `store-config-repo`
+
+参见：
+
+* <https://cloud.spring.io/spring-cloud-config/reference/html/#_git_backend>
+
+  
 
 按照`<application>-<profile>.yaml`来存储多个服务的不同环境的配置信息。
 
@@ -174,6 +171,16 @@ server:
 
 
 ### `store-service-registry`
+
+参见：
+
+* <https://cloud.spring.io/spring-cloud-netflix/reference/html/>
+
+* <https://cloud.spring.io/spring-cloud-netflix/multi/multi__service_discovery_eureka_clients.html>
+
+* <https://cloud.spring.io/spring-cloud-netflix/multi/multi_spring-cloud-eureka-server.html>
+
+  
 
 引入Maven依赖：
 
@@ -211,27 +218,23 @@ eureka:
 
 * `spring.applicaiton.name`为服务名称。
 * `registerWithEureka`为`false`表示Eureka Server不注册自己到Eureka中。
-* `fetchRegistry`为`false`表示不从Eureka Server拿服务注册信息。
+* `fetchRegistry`为`false`表示不从Eureka Server拿服务注册信息到本地。
 
 
 
-在`src/main/resources/`下添加`application.yaml`，内容为：
 
-```yaml
-server:
-  port: ${EUREKA_SERVER_PORT:8761}
-  
-```
-
-
-
-说明：
-
-* `server.port`为指定服务的端口，默认为`8761`，可通过外部传入环境变量指定。
-
-  
 
 ### `store-gateway`
+
+参见：
+
+* <https://cloud.spring.io/spring-cloud-netflix/multi/multi__router_and_filter_zuul.html>
+
+* <https://docs.spring.io/spring-cloud-netflix/docs/2.2.5.RELEASE/reference/html/#router-and-filter-zuul>
+
+* <https://docs.spring.io/spring-cloud-netflix/docs/2.2.5.RELEASE/reference/html/#zuul-timeouts>
+
+  
 
 引入Maven依赖：
 
@@ -278,6 +281,7 @@ zuul:
     customer:
       path: '/customer/**'
       service-id: customer
+      # url: http://customer:8080
   host:
     connect-timeout-millis: 10000
     socket-timeout-millis: 60000
@@ -296,8 +300,10 @@ ribbon:
 eureka:
   client:
     serviceURL:
-      defaultZone: ${EUREKA_SERVER_URL:http://localhost:8761/eureka/}
+      defaultZone: http://service-registry:8080/eureka/
     fetch-registry: true
+  instance:
+    prefer-ip-address: true
 
 
 
@@ -307,7 +313,6 @@ server:
 logging:
   level:
     com.example.store: DEBUG
-
 
 ```
 
@@ -319,12 +324,24 @@ logging:
 * `zuul.prefix: /api` Zuul网关的代理的URL都以`/api`开头。
 * `zuul.routes.customer` 配customer服务的路由，指定路径和服务名。
 * `eureka.client` 配置将Zuul作为Eureka客户端注册到Eureka上。
+* `hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds` 定义了默认的Hystrix超时时间。
+* `ribbon.ReadTimeout` 定义了默认的Ribbon请求访问的超时时间。
 
 
 
 
 
 ### `store-customer`
+
+参见：
+
+* <<https://cloud.spring.io/spring-cloud-netflix/multi/multi__service_discovery_eureka_clients.html>
+
+* <https://docs.spring.io/spring-cloud-netflix/docs/2.2.5.RELEASE/reference/html/#service-discovery-eureka-clients>
+
+* <https://docs.spring.io/spring-cloud-netflix/docs/2.2.5.RELEASE/reference/html/#circuit-breaker-hystrix-clients>
+
+  
 
 引入Maven依赖：
 
@@ -372,6 +389,9 @@ logging:
 spring:
   application:
     name: customer
+  cloud:
+    config:
+      uri: http://config-server:8080/
   jpa:
     open-in-view: false
 
@@ -388,6 +408,7 @@ management:
 说明：
 
 * `exposure.include` 暴露`refresh` 断点用于手工触发更新，暴露`hystrix.stream` 用于采集Hystrix指标。
+* 在本地运行时在VM options中指定本地Config Server的URL: `-Dspring.cloud.config.uri=http://localhost:8888`
 
 
 
@@ -396,22 +417,17 @@ management:
 
 
 ```yaml
-spring:
-  cloud:
-    config:
-      uri: ${CONFIG_SERVER_URL:http://localhost:8888}
-
 server:
-  port: 0 # ${random.int(5000,5100)} doesn't work in zuul ?
+  port: 8080
 
 eureka:         #tells about the Eureka server details and its refresh time
   instance:
     leaseRenewalIntervalInSeconds: 1
     leaseExpirationDurationInSeconds: 2
-    instance-id: ${spring.application.name}:${random.int}
+    prefer-ip-address: true
   client:
     serviceUrl:
-      defaultZone: ${EUREKA_SERVER_URL:http://localhost:8761/eureka/}
+      defaultZone: http://service-registry:8080/eureka/
     healthcheck:
       enabled: true
     lease:
@@ -432,11 +448,6 @@ hystrix:
           thread:
             timeoutInMilliseconds: 5000
 
-opentracing:
-  jaeger:
-    udp-sender:
-      host: ${JAEGER_HOST:localhost}
-      port: ${JAEGER_PORT:6831}
 ```
 
 
@@ -444,9 +455,7 @@ opentracing:
 说明：
 
 * 在`spring.cloud.config.uri` 中配置Config Server的URL，用来拉取服务配置。
-* `server.port: 0` 表示服务采用随机端口。
-* 采用随机端口时，需要指定唯一的Eureka instance id，比如`instance-id: ${spring.application.name}:${random.int}`。
-* `opentracing.jaeger` 配置将OpenTracing服务跟踪数据写入到Jaeger的地址和端口。
+* `healthcheck.enabled: true` 开启Eureka健康检查。
 
 
 
@@ -471,6 +480,12 @@ opentracing:
 
 
 ### `store-hystrix-ui`
+
+参见：
+
+* <https://docs.spring.io/spring-cloud-netflix/docs/2.2.5.RELEASE/reference/html/#circuit-breaker-hystrix-dashboard>
+
+
 
 引入Maven依赖：
 
@@ -512,7 +527,9 @@ spring:
 eureka:
   client:
     serviceUrl:
-      defaultZone: ${EUREKA_SERVER_URL:http://localhost:8761/eureka/}
+      defaultZone: http://service-registry:8080/eureka/
+  instance:
+    prefer-ip-address: true
 
 turbine:
   appConfig: "customer,preference"
@@ -523,7 +540,7 @@ hystrix:
     proxyStreamAllowList: '*'
 
 server:
-  port: ${HYSTRIX_DASHBOARD_PORT:9090}
+  port: 8080
 
 ```
 
@@ -538,6 +555,13 @@ server:
 
 ### Jaeger
 
+参见：
+* <https://github.com/jaegertracing/jaeger>
+* <https://github.com/opentracing-contrib/java-spring-jaeger>
+* <https://github.com/opentracing-contrib/java-spring-jaeger/issues/114>
+* <https://mvnrepository.com/artifact/io.opentracing.contrib/opentracing-spring-jaeger-cloud-starter>
+* <https://mvnrepository.com/artifact/io.opentracing.contrib/opentracing-spring-jaeger-web-starter>
+
 
 
 在本地启动Jager：
@@ -551,6 +575,20 @@ bash ./scripts/start_jaeger.sh
 
 
 ## 测试场景
+
+
+
+### 本地运行
+
+本地运行时需要指定active profile为`local`。
+
+如果是命令行运行，则类似：
+
+```bash
+java -jar -Dspring.profiles.active=local ./store-config-server/target/*.jar
+```
+
+
 
 
 
@@ -602,7 +640,7 @@ http://localhost:8080/api/customer/greeting?name=Grape
 
 
 
-将Spring Boot Applicaton的active profile设置为`test`，再进行测试。
+将Spring Boot Applicaton的active profile设置为`local`，再进行测试。
 
 ```bash
 # 预期结果
