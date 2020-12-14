@@ -1,0 +1,21 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  annotations: {}
+  labels:
+    app: config-server
+    app.kubernetes.io/component: config-server
+    app.kubernetes.io/instance: config-server
+    app.kubernetes.io/name: java
+    app.kubernetes.io/part-of: store
+    app.openshift.io/runtime: java
+    app.openshift.io/runtime-version: openjdk-8-el7
+  name: config-server
+spec:
+  port:
+    targetPort: 8080-tcp
+  to:
+    kind: Service
+    name: config-server
+    weight: 100
+  wildcardPolicy: None
