@@ -175,3 +175,88 @@ oc apply -f ./service-registry/
 ```
 
 
+# Add an existing application on Red Hat OpenShift Service Mesh
+
+
+## Add project as member of ServiceMesh
+
+以Cluster Admin账号登录OpenShift，选择项目为`istio-system`，切换到Admin视图。
+打开Operators / Installed Operators，找到Red Hat Service Mesh，再打开Istio Service Mesh Member Roll。
+打开default，在YAML的`spec.members`中添加本项目名称`william-store-istio`。
+
+
+## 部署注入了sidecar的应用到OpenShift
+
+修改应用的DeploymentConfig的YAML文件，在`spec.template.metadata.annotations` 中添加`sidecar.istio.io/inject: "true"`。
+
+重新部署应用：
+
+```bash
+oc project william-store-istio
+
+oc apply -f ./customer/deployment*.yaml
+oc apply -f ./preference/deployment*.yaml
+oc apply -f ./recommendation/deployment*.yaml
+
+```
+
+## 创建Istio的Networking
+
+```bash
+oc project william-store-istio
+
+# Create Istio networking resources for the project:
+# Istio Gateway, VirtualServcie, DestinationRule
+
+oc apply -f ./istio-networking/
+
+# Check Istio networking resources of project
+
+oc get gateway
+oc get desinationrule
+oc get virtualservice
+
+
+# Check route of Istio control plane
+oc get route -n istio-system
+oc get route -n istio-system | grep william-store-istio
+
+```
+
+## 访问应用
+
+访问Istio gateway暴露的`customer`的路由的Host：<http://customer.store.com> 来访问Customer服务。
+
+`customer.store.com` 在`./istio-networking/gateway-customer.yaml`中定义为暴露的域名。
+
+
+
+注意，由于本示例项目已经使用了Eureka和OpenFeign，因此项目间调用仍然走Eureka的服务寻址。
+
+## Jaeger
+
+在Jaeger中查看以下服务的调用链信息：
+
+- `customer.william-store-istio` 
+- `preference.william-store-istio` 
+
+为什么没有recommendation的？
+为什么Jaeger中只记录单个服务的信息，没有记录服务链信息？本地测试是可以的。
+
+## Kiali
+
+Kiali：
+
+在Kiali中查看服务网络拓扑，在用JMeter模拟压测时，可以看到流量变化（勾选Traffic Animation可看到动画效果）。
+
+
+
+
+
+
+
+
+
+
+
+
