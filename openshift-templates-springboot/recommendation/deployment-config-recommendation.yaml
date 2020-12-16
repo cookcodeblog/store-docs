@@ -33,6 +33,7 @@ spec:
       labels:
         app: recommendation
         deploymentconfig: recommendation
+        version: v1
       annotations:
         sidecar.istio.io/inject: "true"
     spec:
@@ -50,36 +51,36 @@ spec:
           resources: {}
           terminationMessagePath: /dev/termination-log
           terminationMessagePolicy: File
-          livenessProbe:
-            failureThreshold: 3
-            httpGet:
-              path: /actuator/health
-              port: 8080
-              scheme: HTTP
-            initialDelaySeconds: 5
-            periodSeconds: 5
-            successThreshold: 1
-            timeoutSeconds: 1
-          readinessProbe:
-            failureThreshold: 3
-            httpGet:
-              path: /actuator/health
-              port: 8080
-              scheme: HTTP
-            initialDelaySeconds: 5
-            periodSeconds: 5
-            successThreshold: 1
-            timeoutSeconds: 1
-          startupProbe:
-            failureThreshold: 30
-            httpGet:
-              path: /actuator/health
-              port: 8080
-              scheme: HTTP
-            initialDelaySeconds: 5
-            periodSeconds: 10
-            successThreshold: 1
-            timeoutSeconds: 1
+#          livenessProbe:
+#            failureThreshold: 3
+#            httpGet:
+#              path: /actuator/health
+#              port: 8080
+#              scheme: HTTP
+#            initialDelaySeconds: 5
+#            periodSeconds: 5
+#            successThreshold: 1
+#            timeoutSeconds: 1
+#          readinessProbe:
+#            failureThreshold: 3
+#            httpGet:
+#              path: /actuator/health
+#              port: 8080
+#              scheme: HTTP
+#            initialDelaySeconds: 5
+#            periodSeconds: 5
+#            successThreshold: 1
+#            timeoutSeconds: 1
+#          startupProbe:
+#            failureThreshold: 30
+#            httpGet:
+#              path: /actuator/health
+#              port: 8080
+#              scheme: HTTP
+#            initialDelaySeconds: 5
+#            periodSeconds: 10
+#            successThreshold: 1
+#            timeoutSeconds: 1
       dnsPolicy: ClusterFirst
       restartPolicy: Always
       schedulerName: default-scheduler

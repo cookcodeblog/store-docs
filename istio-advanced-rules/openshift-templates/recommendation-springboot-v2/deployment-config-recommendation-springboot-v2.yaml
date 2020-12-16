@@ -1,23 +1,22 @@
 apiVersion: apps.openshift.io/v1
 kind: DeploymentConfig
 metadata:
-  annotations:
-    sidecar.jaegertracing.io/inject: "true"
+  annotations: {}
   labels:
-    app: customer
-    app.kubernetes.io/component: customer
-    app.kubernetes.io/instance: customer
+    app: recommendation
+    app.kubernetes.io/component: recommendation
+    app.kubernetes.io/instance: recommendation
     app.kubernetes.io/name: java
     app.kubernetes.io/part-of: store
     app.openshift.io/runtime: java
     app.openshift.io/runtime-version: openjdk-8-el7
-  name: customer
+  name: recommendation-v2
 spec:
   replicas: 1
   revisionHistoryLimit: 10
   selector:
-    app: customer
-    deploymentconfig: customer
+    app: recommendation
+    deploymentconfig: recommendation-v2 # deployment config name
   strategy:
     activeDeadlineSeconds: 21600
     resources: {}
@@ -32,15 +31,16 @@ spec:
     metadata:
       creationTimestamp: null
       labels:
-        app: customer
-        deploymentconfig: customer
+        app: recommendation
+        deploymentconfig: recommendation-v2 # deployment config name
+        version: v2 # pod version label
       annotations:
         sidecar.istio.io/inject: "true"
     spec:
       containers:
         - image: ' '
           imagePullPolicy: Always
-          name: customer
+          name: recommendation
           ports:
             - containerPort: 8080
               protocol: TCP
@@ -91,9 +91,9 @@ spec:
     - imageChangeParams:
         automatic: true
         containerNames:
-          - customer
+          - recommendation
         from:
           kind: ImageStreamTag
-          name: customer:latest
+          name: recommendation:v2 # image stream tag
       type: ImageChange
     - type: ConfigChange
