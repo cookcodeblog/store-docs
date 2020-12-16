@@ -4,6 +4,7 @@ metadata:
   annotations: {}
   labels:
     app: preference
+    service: preference
     app.kubernetes.io/component: preference
     app.kubernetes.io/instance: preference
     app.kubernetes.io/name: java

@@ -4,6 +4,7 @@ metadata:
   annotations: {}
   labels:
     app: recommendation
+    service: recommendation
     app.kubernetes.io/component: recommendation
     app.kubernetes.io/instance: recommendation
     app.kubernetes.io/name: java

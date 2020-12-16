@@ -4,6 +4,7 @@ metadata:
   annotations: {}
   labels:
     app: customer
+    service: customer
     app.kubernetes.io/component: customer
     app.kubernetes.io/instance: customer
     app.kubernetes.io/name: java
