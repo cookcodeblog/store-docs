@@ -1,0 +1,13 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: recommendation
+spec:
+  host: recommendation # OpenShift service, FQDN: recommendation.<namespace>.svc.cluster.local
+  subsets:
+    - labels:
+        version: v1 # pods labeled with "version: v1"
+      name: version-v1
+    - labels:
+        version: v2 # pods labeled with "version: v2"
+      name: version-v2

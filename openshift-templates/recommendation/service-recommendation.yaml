@@ -27,6 +27,6 @@ spec:
       targetPort: 8778
   selector:
     app: recommendation
-    deploymentconfig: recommendation
+#    deploymentconfig: recommendation # support both recommendation and recommendation-v2
   sessionAffinity: None
   type: ClusterIP

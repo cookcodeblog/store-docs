@@ -10,13 +10,13 @@ metadata:
     app.kubernetes.io/part-of: store
     app.openshift.io/runtime: java
     app.openshift.io/runtime-version: openjdk-8-el7
-  name: recommendation
+  name: recommendation-v2 # deployment config name
 spec:
   replicas: 1
   revisionHistoryLimit: 10
   selector:
     app: recommendation
-    deploymentconfig: recommendation
+    deploymentconfig: recommendation-v2 # deployment config name
   strategy:
     activeDeadlineSeconds: 21600
     resources: {}
@@ -32,8 +32,8 @@ spec:
       creationTimestamp: null
       labels:
         app: recommendation
-        deploymentconfig: recommendation
-        version: v1 # pod label: v1 version
+        deploymentconfig: recommendation-v2 # deployment config name
+        version: v2 # v2 label
       annotations:
         sidecar.istio.io/inject: "true"
     spec:
@@ -94,6 +94,6 @@ spec:
           - recommendation
         from:
           kind: ImageStreamTag
-          name: recommendation:latest
+          name: recommendation:v2 # v2 image tag
       type: ImageChange
     - type: ConfigChange
