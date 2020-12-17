@@ -1,0 +1,45 @@
+apiVersion: build.openshift.io/v1
+kind: BuildConfig
+metadata:
+  annotations: {}
+  labels:
+    app: recommendation
+    app.kubernetes.io/component: recommendation
+    app.kubernetes.io/instance: recommendation
+    app.kubernetes.io/name: java
+    app.kubernetes.io/part-of: store
+    app.openshift.io/runtime: java
+    app.openshift.io/runtime-version: openjdk-8-el7
+  name: recommendation-v2
+spec:
+  failedBuildsHistoryLimit: 5
+  nodeSelector: null
+  output:
+    to:
+      kind: ImageStreamTag
+      name: recommendation:v2
+  postCommit: {}
+  resources: {}
+  runPolicy: Serial
+  source:
+    contextDir: /
+    git:
+      ref: version-v2
+      uri: https://github.com/cookcodeblog/store-recommendation.git
+    type: Git
+  strategy:
+    sourceStrategy:
+      env:
+        - name: MAVEN_MIRROR_URL
+          valueFrom:
+            configMapKeyRef:
+              key: MAVEN_MIRROR_URL
+              name: store-config
+      from:
+        kind: ImageStreamTag
+        name: java:openjdk-8-el7
+        namespace: openshift
+    type: Source
+  successfulBuildsHistoryLimit: 5
+  triggers:
+    - type: ConfigChange
