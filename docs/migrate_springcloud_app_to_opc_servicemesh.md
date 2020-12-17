@@ -17,7 +17,7 @@
 | 服务配置           | Spring Cloud Config Server     | ConfigMap, Secret                             |
 | 服务注册与发现     | Eureka                         | Etcd + Service + 集群内DNS                    |
 | 负载均衡           | Ribbon                         | Service, Istio的Envoy数据平面                 |
-| 服务间调用         | OpenFeign 或 RestTemplate      | RestTemplate                                  |
+| 服务间调用         | OpenFeign 或 RestTemplate      | 任意HTTP client                               |
 | 路由管理           | Zuul 或 Spring Cloud Gateway   | Istio的VirtualService和DetinationRule         |
 | 对外API网关        | Zuul 或 Spring Cloud Gateway   | Route，Istio的Ingress gateway和Egress gateway |
 | 限流和熔断         | Hystrix                        | Istio的Envoy数据平面                          |
@@ -29,9 +29,17 @@
 
 ## 应用配置
 
-应用迁移到Istio，代码无需改动。
 
-如果需要用OpenTracing Jaeger来做服务跟踪，则需要按照下面步骤配置。
+
+### 应用改造
+
+Spring Boot应用迁移到Istio，代码无需改动。
+
+但是如果需要用OpenTracing Jaeger来做服务跟踪，则需要按照下面步骤配置。
+
+
+
+Spring Cloud应用迁移到Istio，需要将基于Spring Cloud Eureka的服务注册发现，改为基于OpenShift Service的的服务注册发现，否则无法使用Istio的traffic management功能。
 
 
 
@@ -84,7 +92,7 @@ opentracing:
 
 
 
-### 改造Deployment
+### 配置Deployment
 
 1. 如果原来使用OpenShift DeploymentConfig来部署，要改成用Deployment来部署。Istio只支持Deployment方式部署。
 
@@ -123,7 +131,7 @@ opentracing:
 
 
 
-### Service改造
+### 配置Service
 
 1. 需要Istio sidecar proxy代理流量的Pod都必须归属到一个OpenShift Service。
 2. 需要为Service的port命名，命名规则为`<protocol>-<suffix>`，其中`suffix`选填。port名称比如`http-8080`或`http`。如果没有在Service为port命名，或没有按规则来命名，Istio sidecar proxy将忽略这些端口。
@@ -190,6 +198,30 @@ opentracing:
 
 可以在`istio-system`项目下查看Kiali的路由地址。
 
+也可以在OpenShift Typology的右上角打开Kiali。
+
+
+
+SpringBoot应用的流量监控：
+
+
+
+recomendation的v1占90%，v2占10%：
+
+![image-20201217132300698](/Users/linsirui/Library/Application Support/typora-user-images/image-20201217132300698.png)
+
+
+
+Recommendation的v1占80%，v2占20%。
+
+
+
+![image-20201217132611733](/Users/linsirui/Library/Application Support/typora-user-images/image-20201217132611733.png)
+
+
+
+
+
 
 
 ### 服务跟踪
@@ -200,6 +232,106 @@ opentracing:
 
 
 
+SpringBoot应用的服务跟踪信息：
+
+
+
+![image-20201217134934473](/Users/linsirui/Library/Application Support/typora-user-images/image-20201217134934473.png)
+
+
+
+![image-20201217135005161](/Users/linsirui/Library/Application Support/typora-user-images/image-20201217135005161.png)
+
+
+
+## Spring Cloud Netflix与Istio
+
+
+
+使用Eureka后，微服务间调用，不再通过OpenShift Service，而是直接访问Eureka返回的目标微服务的某个Pod IP。
+
+由于不经过OpenShift Service，对该目标微服务，Istio的路由规则不生效，也就无法使用Istio的路由管理功能。
+
+
+
+![image-20201217141854986](/Users/linsirui/Library/Application Support/typora-user-images/image-20201217141854986.png)
+
+
+
+### Eureka和Istio的路由方式对比
+
+
+
+
+
+![image-20201217140329144](/Users/linsirui/Library/Application Support/typora-user-images/image-20201217140329144.png)
+
+
+
+
+
+### 典型的Spring Cloud Neflix架构
+
+
+
+![image-20201217143933161](/Users/linsirui/Library/Application Support/typora-user-images/image-20201217143933161.png)
+
+
+
+
+
+### Spring Cloud Netflix与Istio对比
+
+采用Spring Cloud Netflix的微服务：
+
+
+
+![img](https://dotnetvibes.files.wordpress.com/2019/05/netflix-oss-issues.png?w=700)
+
+
+
+采用Service Mesh sidecar的微服务架构：
+
+
+
+![Sidecar Design Pattern](https://dotnetvibes.files.wordpress.com/2019/05/sidecar-design-pattern.png?w=700)
+
+
+
+
+
+两种方式对比：
+
+![image-20201217153051097](/Users/linsirui/Library/Application Support/typora-user-images/image-20201217153051097.png)
+
+
+
+小结：
+
+* Spring Cloud Netflix: 
+
+  - 优点：成熟
+  - 缺点：
+    - 每个微服务都要集成一些微服务基础组件功能。
+    - 每个系统都要部署一些微服务基础组件。
+    - 只支持Java。
+    - 代码侵入。
+
+* Istio：
+  * 优点：
+    * 由PaaS平台和Istio提供微服务基础组件功能，微服务只需要关注业务本身。
+    * 语言无关，支持多语言。
+    * 简化系统架构。
+    * 功能更丰富，更强大。
+
+  * 缺点：
+    * Service Mesh 还在快速发展中
+    * 额外的网络开销
+
+
+
+
+
 ## Troubleshooting
 
 
@@ -207,6 +339,46 @@ opentracing:
 ### Istio配置问题
 
 * <https://kiali.io/documentation/v1.15/validations>
+
+
+
+### bookinfo的Istio配置问题
+
+bookinfo的Istio Ingress Gateway 和 VirtualServcie的`host`使用了`*`通配符，会影响其他应用。
+
+在测试完bookinfo后，应将其Istio config删除。
+
+
+
+### Kiali graph unkown
+
+Kiali graph上的unkown节点，表示流量经过的节点Kiali未能识别出service或workload名称。
+
+可能的情况：
+
+* Health check
+* Prometheus采集指标
+
+
+
+
+
+参见：
+
+* <https://kiali.io/documentation/latest/faq/#many-unknown>
+
+
+
+### Kiali graph passthroughcluster
+
+正常现象。
+
+
+
+参见：
+
+* <https://stackoverflow.com/questions/61633167/why-is-my-inter-service-traffic-showing-in-the-passthrough-cluster-in-kiali>
+* <https://kiali.io/documentation/latest/faq/#passthrough-traffic>
 
 
 
@@ -237,4 +409,22 @@ opentracing:
 * [Jaeger Intro - Yuri Shkuro, Uber Technologies & Pavol Loffay, Red Hat](https://www.youtube.com/watch?v=cXoTja7BvSA)
 * [Jaeger Deep Dive - Yuri Shkuro, Uber Technologies & Pavol Loffay, Red Hat](https://www.youtube.com/watch?v=zb0fdU6c0KU)
 * [Mastering-Distributed-Tracing](https://github.com/PacktPublishing/Mastering-Distributed-Tracing)
+
+
+
+### Kiali 文档
+
+* [Kiali Valiation](<https://kiali.io/documentation/v1.15/validations>)
+
+* [Kiali FAQ](https://kiali.io/documentation/latest/faq/)
+
+
+
+### 微服务相关文档
+
+* [Microservices Journey from Netflix OSS to Istio Service Mesh](https://dzone.com/articles/microservices-journey-from-netflix-oss-to-istio-se)
+* [Consul vs. Istio](https://www.consul.io/docs/intro/vs/istio)
+* [Microservices.NOW: from Netflix OSS to Istio Service Mesh](https://www.youtube.com/watch?v=WaD0SBb13AU)
+* [How to Get a Service Mesh Into Prod without Getting Fired - William Morgan, Buoyant, Inc](XA1aGpYzpYg)
+* [Microservices in the Cloud with Kubernetes and Istio (Google I/O '18)](https://www.youtube.com/watch?v=gauOI0O9fRM)
 
