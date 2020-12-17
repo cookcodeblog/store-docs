@@ -2,7 +2,6 @@ apiVersion: networking.istio.io/v1alpha3
 kind: DestinationRule
 metadata:
   name: customer
-  namespace: william-store-springboot
 spec:
   host: customer
   subsets:
@@ -14,7 +13,6 @@ apiVersion: networking.istio.io/v1alpha3
 kind: DestinationRule
 metadata:
   name: preference
-  namespace: william-store-springboot
 spec:
   host: preference
   subsets:
@@ -26,7 +24,6 @@ apiVersion: networking.istio.io/v1alpha3
 kind: DestinationRule
 metadata:
   name: recommendation
-  namespace: william-store-springboot
 spec:
   host: recommendation
   subsets:

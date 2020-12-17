@@ -19,7 +19,7 @@ metadata:
   name: store
 spec:
   hosts:
-    - "*"
+    - "customer.store-springboot.com"
   gateways:
     - store-gateway
   http:

@@ -4,6 +4,7 @@ metadata:
   annotations: {}
   labels:
     app: preference
+    service: preference
     app.kubernetes.io/component: preference
     app.kubernetes.io/instance: preference
     app.kubernetes.io/name: java
@@ -13,20 +14,10 @@ metadata:
   name: preference
 spec:
   ports:
-    - name: 8080-tcp
+    - name: http-8080
       port: 8080
-      protocol: TCP
       targetPort: 8080
-    - name: 8443-tcp
-      port: 8443
-      protocol: TCP
-      targetPort: 8443
-    - name: 8778-tcp
-      port: 8778
-      protocol: TCP
-      targetPort: 8778
   selector:
     app: preference
-    deploymentconfig: preference
   sessionAffinity: None
   type: ClusterIP

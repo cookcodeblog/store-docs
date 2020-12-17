@@ -1,0 +1,36 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: customer
+spec:
+  host: customer
+  subsets:
+    - labels:
+        version: v1
+      name: v1
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: preference
+spec:
+  host: preference
+  subsets:
+    - labels:
+        version: v1
+      name: v1
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: recommendation
+spec:
+  host: recommendation
+  subsets:
+    - labels:
+        version: v1
+      name: v1
+
+
+
+

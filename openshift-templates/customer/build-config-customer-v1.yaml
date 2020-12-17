@@ -10,14 +10,14 @@ metadata:
     app.kubernetes.io/part-of: store
     app.openshift.io/runtime: java
     app.openshift.io/runtime-version: openjdk-8-el7
-  name: customer
+  name: customer-v1
 spec:
   failedBuildsHistoryLimit: 5
   nodeSelector: null
   output:
     to:
       kind: ImageStreamTag
-      name: customer:latest
+      name: customer:v1
   postCommit: {}
   resources: {}
   runPolicy: Serial

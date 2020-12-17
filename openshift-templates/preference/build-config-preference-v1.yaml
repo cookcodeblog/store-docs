@@ -3,21 +3,21 @@ kind: BuildConfig
 metadata:
   annotations: {}
   labels:
-    app: recommendation
-    app.kubernetes.io/component: recommendation
-    app.kubernetes.io/instance: recommendation
+    app: preference
+    app.kubernetes.io/component: preference
+    app.kubernetes.io/instance: preference
     app.kubernetes.io/name: java
     app.kubernetes.io/part-of: store
     app.openshift.io/runtime: java
     app.openshift.io/runtime-version: openjdk-8-el7
-  name: recommendation
+  name: preference-v1
 spec:
   failedBuildsHistoryLimit: 5
   nodeSelector: null
   output:
     to:
       kind: ImageStreamTag
-      name: recommendation:latest
+      name: preference:v1
   postCommit: {}
   resources: {}
   runPolicy: Serial
@@ -25,7 +25,7 @@ spec:
     contextDir: /
     git:
       ref: main
-      uri: https://github.com/cookcodeblog/store-recommendation.git
+      uri: https://github.com/cookcodeblog/store-preference.git
     type: Git
   strategy:
     sourceStrategy:
