@@ -10,21 +10,21 @@ metadata:
     app.kubernetes.io/part-of: store
     app.openshift.io/runtime: java
     app.openshift.io/runtime-version: openjdk-8-el7
-  name: recommendation
+  name: recommendation-v2
 spec:
   failedBuildsHistoryLimit: 5
   nodeSelector: null
   output:
     to:
       kind: ImageStreamTag
-      name: recommendation:latest
+      name: recommendation:v2
   postCommit: {}
   resources: {}
   runPolicy: Serial
   source:
     contextDir: /
     git:
-      ref: istio-springboot
+      ref: istio-springboot-v2
       uri: https://github.com/cookcodeblog/store-recommendation.git
     type: Git
   strategy:

@@ -3,21 +3,21 @@ kind: BuildConfig
 metadata:
   annotations: {}
   labels:
-    app: customer
-    app.kubernetes.io/component: customer
-    app.kubernetes.io/instance: customer
+    app: recommendation
+    app.kubernetes.io/component: recommendation
+    app.kubernetes.io/instance: recommendation
     app.kubernetes.io/name: java
     app.kubernetes.io/part-of: store
     app.openshift.io/runtime: java
     app.openshift.io/runtime-version: openjdk-8-el7
-  name: customer
+  name: recommendation-v1
 spec:
   failedBuildsHistoryLimit: 5
   nodeSelector: null
   output:
     to:
       kind: ImageStreamTag
-      name: customer:latest
+      name: recommendation:v1
   postCommit: {}
   resources: {}
   runPolicy: Serial
@@ -25,7 +25,7 @@ spec:
     contextDir: /
     git:
       ref: istio-springboot
-      uri: https://github.com/cookcodeblog/store-customer.git
+      uri: https://github.com/cookcodeblog/store-recommendation.git
     type: Git
   strategy:
     sourceStrategy:
