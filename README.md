@@ -7,3 +7,5 @@
 - [在OpenShfit使用Jaeger对Spring Boot / Spring Cloud应用作分布式服务跟踪](./docs/openshfit_jaeger_tracing.md)
 - [在OpenShift上使用Hystrix Dashboard和Turbine来汇聚和可视化展示Hystrix指标](./docs/openshift_hystrix_turbine.md)
 - [迁移Spring Cloud应用到OpenShift Service Mesh](./docs/migrate_springcloud_app_to_opc_servicemesh.md)
+- [在Istio上根据HTTP header对Spring Boot应用作路由分发实现AB testing](https://cookcode.blog.csdn.net/article/details/111412156)
+- [用Istio实现蓝绿部署和金丝雀部署](https://cookcode.blog.csdn.net/article/details/111414609)
