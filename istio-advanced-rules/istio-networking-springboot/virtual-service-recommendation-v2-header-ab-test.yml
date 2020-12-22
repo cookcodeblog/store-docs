@@ -13,8 +13,12 @@ spec:
       route:
         - destination:
             host: recommendation
+            port:
+              number: 8080
             subset: version-v2
     - route:
         - destination:
             host: recommendation
+            port:
+              number: 8080
             subset: version-v1
