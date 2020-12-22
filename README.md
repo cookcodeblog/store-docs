@@ -9,3 +9,4 @@
 - [迁移Spring Cloud应用到OpenShift Service Mesh](./docs/migrate_springcloud_app_to_opc_servicemesh.md)
 - [在Istio上根据HTTP header对Spring Boot应用作路由分发实现AB testing](./docs/ab_test_with_istio.md)
 - [用Istio实现蓝绿部署和金丝雀部署](./docs/istio_blue_green_canary_deployment.md)
+- [测试Istio默认路由](./docs/istio_default_route.md)

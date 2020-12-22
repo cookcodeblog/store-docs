@@ -1,0 +1,35 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: store-gateway
+spec:
+  selector:
+    istio: ingressgateway # use istio default controller
+  servers:
+    - port:
+        number: 80
+        name: http
+        protocol: HTTP
+      hosts:
+        - "istio-ingressgateway-istio-system.apps.ocp4-grub.ocp.com"
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: store
+spec:
+  hosts:
+    - "istio-ingressgateway-istio-system.apps.ocp4-grub.ocp.com"
+  gateways:
+    - store-gateway
+  http:
+    - match:
+        - uri:
+            prefix: "/customer"
+      rewrite:
+        uri: /
+      route:
+        - destination:
+            host: customer
+            port:
+              number: 8080
