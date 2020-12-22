@@ -1,0 +1,22 @@
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: recommendation
+spec:
+  hosts:
+    - recommendation
+  http:
+    - fault:
+        abort:
+          httpStatus: 503
+          percentage:
+            value: 50 # 100 means 100%
+      route:
+        - destination:
+            host: recommendation
+            subset: version-v1
+    - route:
+        - destination:
+            host: recommendation
+            subset: version-v1
+          weight: 100
