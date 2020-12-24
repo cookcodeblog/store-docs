@@ -129,3 +129,41 @@ istio-ingressgateway -> gateway(zuul) -> customer -> preference -> recommendatio
 
 
 
+
+
+## Istio vs API Gateway
+
+
+
+流量方向一：
+
+```txt
+API Gateway -> Service Mesh (Ingress Gatway) -> Service
+```
+
+API Gateway作为网络边界。
+
+
+
+流量方向二：
+
+```txt
+Route -> Service Mesh (Ingress Gateway) -> API Gateway -> Service
+```
+
+
+
+API Gateway作为Service Mesh的一个服务。
+
+
+
+
+
+References：
+
+- <https://dzone.com/articles/api-gateway-vs-service-mesh>
+
+- <https://banzaicloud.com/blog/backyards-api-gateway/>
+
+  
+

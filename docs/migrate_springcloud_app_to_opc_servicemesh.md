@@ -70,6 +70,38 @@ opentracing:
 
 
 
+### 去掉Eureka
+
+1. 在Maven pom.xml中删除`spring-cloud-starter-netflix-eureka-client`依赖。
+
+2. 在Spring Boot Application类中，删除`@EnableEurekaClient`或`@EnableDiscoveryClient`注解。
+
+3. 项目中使用了RestTemplate调用服务，去掉`@LoadBalanced`注解。
+
+4. 项目中使用了OpenFeign调用服务，在`@FeignClient`注解中指定`url`为服务地址。OpenFeign在有指定`url`时，不再根据`name`去Eureka查找服务地址。
+
+5. 对Zuul Gateway，改为使用静态url配置和禁用Eureka。示例：
+
+   ```yaml
+   ribbon:
+     eureka:
+       enabled: false
+       
+       
+   zuul:
+     prefix: /api
+     ignored-services: '*' # 排除所有基于Eureka服务ID的路由的注册
+     routes:
+       customer:
+         path: '/customer/**'
+         url: http://customer:8080
+     host:
+       connect-timeout-millis: 5000
+       socket-timeout-millis: 5000
+   ```
+
+   
+
 
 
 ## OpenShift配置
