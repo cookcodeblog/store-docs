@@ -9,8 +9,16 @@ spec:
     - fault:
         delay:
           fixedDelay: 7.000s
-          percent: 5
+          percent: 50
       route:
         - destination:
             host: recommendation
+            port:
+              number: 8080
+            subset: version-v1
+    - route:
+        - destination:
+            host: recommendation
+            port:
+              number: 8080
             subset: version-v1
