@@ -159,7 +159,9 @@ opentracing:
 
 
 
+参见：
 
+* <https://istio.io/latest/docs/ops/deployment/requirements/>
 
 
 
@@ -205,6 +207,62 @@ opentracing:
 
 
 
+
+
+### 配置Istio ingress gatway默认路由
+
+如果不想采用自定义域名，也可以配置Istio ingress gateway默认路由。
+
+
+
+将项目的Gateway和VirtualService的`host`都设置为`istio-ingressgateway-istio-system.apps.ocp4-grub.ocp.com`。
+
+因为`customer`的根路径为`/`，所以需要根据URL prefix `/customer` 匹配后，需要rewrite URL为`/` 。
+
+访问`customer` 服务：
+
+- <http://istio-ingressgateway-istio-system.apps.ocp4-grub.ocp.com/customer>
+
+
+
+```yaml
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: store-gateway
+spec:
+  selector:
+    istio: ingressgateway # use istio default controller
+  servers:
+    - port:
+        number: 80
+        name: http
+        protocol: HTTP
+      hosts:
+        - "istio-ingressgateway-istio-system.apps.ocp4-grub.ocp.com"
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: store
+spec:
+  hosts:
+    - "istio-ingressgateway-istio-system.apps.ocp4-grub.ocp.com"
+  gateways:
+    - store-gateway
+  http:
+    - match:
+        - uri:
+            prefix: "/customer"
+      rewrite:
+        uri: /
+      route:
+        - destination:
+            host: customer
+            port:
+              number: 8080
+```
+
 ## Demo
 
 
@@ -221,6 +279,13 @@ opentracing:
 8. 继续在Kiali中监控服务的流量，此时50%的流量发给v1，50%的流量发给v2。
 9. 配置Istio的VirtualService和DetinationRule，分配100%的流量给v2。
 10. 继续在Kiali中监控服务的流量，此时100%的流量发给v2。
+
+
+
+参见：
+
+* <https://istio.io/latest/docs/tasks/traffic-management/traffic-shifting/>
+* [Canary Deployments using Istio](https://istio.io/latest/blog/2017/0.1-canary/)
 
 
 

@@ -47,6 +47,12 @@ customer -> preference -> recommendation (v1/v2)
 
 
 
+注意：先配置DestinationRule，后配置VirtualService，避免出现503错误。参见：
+
+- [Avoid 503 errors while reconfiguring service routes](https://istio.io/latest/docs/ops/best-practices/traffic-management/#avoid-503-errors-while-reconfiguring-service-routes)
+
+
+
 ## 金丝雀部署
 
 **目的：**
