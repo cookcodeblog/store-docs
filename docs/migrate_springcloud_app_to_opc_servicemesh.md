@@ -68,6 +68,9 @@ opentracing:
       port: 6831
 ```
 
+参见：
+
+- <https://istio.io/latest/docs/tasks/observability/distributed-tracing/overview/#trace-context-propagation>
 
 
 ### 去掉Eureka
