@@ -121,7 +121,7 @@
 1. 将请求全部都路由到v1。
 2. 根据指定的HTTP header路由到v2。
 3. 在v2路由上注入延时（delay）故障。
-4. 在v2路由上注入退出（abort）故障。
+4. 在v2路由上注入中断（abort）故障。
 
 
 
@@ -314,7 +314,9 @@ TODO
 
 在Kiali上查看服务网络拓扑。
 
-在Grafana上可视化查看Metrics。
+在Grafana上可视化查看Metrics。在istio-systems项目下查看Grafana的route。
+
+打开Grafana，点击Dashboard / Manage，选择Istio Mesh Dashboard。
 
 
 
